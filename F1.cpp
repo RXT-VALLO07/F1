@@ -1,24 +1,30 @@
 #include <iostream>
 #include <string>
+#include <algorithm>  // Per std::sort
 
 using namespace std;
 
-// Costanti per il numero massimo di piloti
+// Costanti
 const int MAX_PILOTI = 20;
 
-// Struttura per memorizzare le informazioni di un pilota
+// Struttura Pilota
 struct Pilota {
     string nome;
     string scuderia;
     int punti;
 };
 
-// Array per memorizzare i piloti
+// Array per i piloti
 Pilota piloti[MAX_PILOTI];
-int numPiloti = 0;  // Contatore per i piloti registrati
+int numPiloti = 0;
 
-// Tabella punteggi per i primi 10 classificati
+// Tabella punteggi per i primi 10
 int punti_f1[10] = {25, 18, 15, 12, 10, 8, 6, 4, 2, 1};
+
+// Funzione per ordinare la classifica in base ai punti (sort)
+bool confrontaPiloti(const Pilota &a, const Pilota &b) {
+    return a.punti > b.punti;
+}
 
 int main() {
     while (true) {
@@ -31,6 +37,7 @@ int main() {
         int scelta;
         cout << "Scegli un'opzione: ";
         cin >> scelta;
+        cin.ignore(); // Per evitare problemi con getline()
 
         if (scelta == 1) {
             if (numPiloti >= MAX_PILOTI) {
@@ -39,9 +46,9 @@ int main() {
             }
 
             cout << "Nome Pilota: ";
-            cin >> piloti[numPiloti].nome;
+            getline(cin, piloti[numPiloti].nome);
             cout << "Nome Scuderia: ";
-            cin >> piloti[numPiloti].scuderia;
+            getline(cin, piloti[numPiloti].scuderia);
             piloti[numPiloti].punti = 0;
             numPiloti++;
 
@@ -54,17 +61,17 @@ int main() {
             }
 
             string risultati[MAX_PILOTI];
-            cout << "\nInserisci i nomi dei piloti nell'ordine di arrivo (uno per riga):" << endl;
+            cout << "\nInserisci i nomi dei piloti nell'ordine di arrivo:" << endl;
             for (int i = 0; i < numPiloti; i++) {
                 cout << "Posizione " << i + 1 << ": ";
-                cin >> risultati[i];
+                getline(cin, risultati[i]);
             }
 
-            // Assegnazione dei punti ai piloti
+            // Assegnazione punti
             for (int posizione = 0; posizione < numPiloti; posizione++) {
                 for (int j = 0; j < numPiloti; j++) {
                     if (piloti[j].nome == risultati[posizione]) {
-                        if (posizione < 10) { // Solo i primi 10 ricevono punti
+                        if (posizione < 10) {
                             piloti[j].punti += punti_f1[posizione];
                         }
                         break;
@@ -80,16 +87,8 @@ int main() {
                 continue;
             }
 
-            // Ordinamento della classifica con Bubble Sort
-            for (int i = 0; i < numPiloti - 1; i++) {
-                for (int j = 0; j < numPiloti - i - 1; j++) {
-                    if (piloti[j].punti < piloti[j + 1].punti) {
-                        Pilota temp = piloti[j];
-                        piloti[j] = piloti[j + 1];
-                        piloti[j + 1] = temp;
-                    }
-                }
-            }
+            // Ordinamento classifica con sort()
+            sort(piloti, piloti + numPiloti, confrontaPiloti);
 
             cout << "\nClassifica Piloti:" << endl;
             for (int i = 0; i < numPiloti; i++) {
@@ -107,4 +106,6 @@ int main() {
 
     return 0;
 }
+
+
 
